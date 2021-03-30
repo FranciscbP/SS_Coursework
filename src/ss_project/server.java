@@ -6,7 +6,9 @@ public class server
 {        
     public static void main(String[] args) throws IOException
     {        
-        ServerSocket server = new ServerSocket(9090);        
+        ServerSocket server = new ServerSocket(9090);    
+        System.out.println("Server Running...");  
+        
         while (true) 
         {
             Socket client = server.accept();
