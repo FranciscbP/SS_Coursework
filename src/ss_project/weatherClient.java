@@ -21,6 +21,13 @@ public class weatherClient
         //Receive from Server
         String dataReceived = dataFromServer.readUTF();
         System.out.println(dataReceived);
+        weather();
+    }        
+    public static void weather()
+    {
+        double doubleRandomNumber = Math.random() * 37;
+        int randomNumber = (int)doubleRandomNumber;
+        System.out.println(randomNumber);
         
     }
 }
