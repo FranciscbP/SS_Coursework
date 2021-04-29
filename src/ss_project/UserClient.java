@@ -16,10 +16,12 @@ import javax.swing.*;
  */
 public class UserClient 
 {
-    //Variables
+    String loggedUser = "";
+    
+    //Main Page Variables
     JFrame frame = null;
     JPanel container = null;
-    JPanel panel2 = null;
+    JPanel panel = null;
     JLabel loggedInLbl = null;
     JLabel usernameLbl = null;
     JLabel dataDispLbl = null;
@@ -30,12 +32,28 @@ public class UserClient
     JButton downloadBtn = null;
     JButton logOutBtn = null;
     
+    //Login Page Variables
+    JFrame logFrame = null;
+    JPanel logContainer = null;
+    JPanel logPanel = null;
+    JLabel titleLbl = null;
+    JLabel logUsernameLbl = null;
+    JTextField logUsernameField = null;
+    JLabel passwordLbl = null;
+    JPasswordField passwordField = null;
+    JLabel confirmPasswordLbl = null;
+    JPasswordField confirmPasswordField = null;
+    JButton loginBtn = null;
+    JButton registerBtn = null;
+    JButton changeToRegisterPage = null;
+    JButton changeTologinPage = null;
+    
     public UserClient()
     {
-
-        initMainPage();
+        initLoginPage();
     }
     
+    //Create Main Page
     public void initMainPage()
     {
         //Creating the Frame     
@@ -49,11 +67,11 @@ public class UserClient
         container.setBackground(new java.awt.Color(26, 29, 57));
         container.setLayout(null);
         
-        panel2 = new JPanel();
-        panel2.setBackground(new java.awt.Color(32, 36, 69));
-        panel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
-        panel2.setBounds(10, 10, 280, 70);
-        container.add(panel2);
+        panel = new JPanel();
+        panel.setBackground(new java.awt.Color(32, 36, 69));
+        panel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+        panel.setBounds(10, 10, 280, 70);
+        container.add(panel);
         
         loggedInLbl = new JLabel("Logged In as: ");
         loggedInLbl.setForeground(Color.WHITE);
@@ -62,10 +80,10 @@ public class UserClient
         usernameLbl = new JLabel();               
         usernameLbl.setForeground(Color.WHITE);
         usernameLbl.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        usernameLbl.setText("KIKO");
+        usernameLbl.setText(loggedUser);
               
-        javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
-        panel2.setLayout(panel2Layout);
+        javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel);
+        panel.setLayout(panel2Layout);
         panel2Layout.setHorizontalGroup
         (
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -167,32 +185,361 @@ public class UserClient
         frame.setVisible(true);
     }
     
-    public static void main(String args[])
+    //Create Login Page
+    public void initLoginPage()
     {
-        /* Create and display the form */
-        new UserClient();
-        //socket();
+        //Creating the Frame     
+        logFrame = new JFrame("Login");
+        logFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        logFrame.setSize(614, 430);
+        logFrame.setLocationRelativeTo(null);
+        logFrame.setResizable(false);
+        
+        logContainer = new JPanel();
+        logContainer.setBackground(new java.awt.Color(26, 29, 57));
+        logContainer.setLayout(null);
+        
+        logPanel = new JPanel();
+        logPanel.setBackground(new java.awt.Color(32, 36, 69));
+        logPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));      
+        logPanel.setBounds(0, 0, 614, 70);
+        logPanel.setLayout(null);
+        logContainer.add(logPanel);
+    
+        titleLbl = new JLabel("Login");
+        titleLbl.setForeground(Color.WHITE);
+        titleLbl.setBounds(280, 0, 100, 70);
+        titleLbl.setFont(new java.awt.Font("Dialog", 0, 24));
+        logPanel.add(titleLbl);
+        
+        logUsernameLbl = new JLabel("Username");
+        logUsernameLbl.setForeground(Color.WHITE);
+        logUsernameLbl.setBounds(138, 100, 100, 70);
+        logUsernameLbl.setFont(new java.awt.Font("Dialog", 0, 18));
+        logContainer.add(logUsernameLbl);
+        
+        logUsernameField = new JTextField();
+        logUsernameField.setForeground(Color.WHITE);
+        logUsernameField.setBackground(new java.awt.Color(32, 36, 69));
+        logUsernameField.setBounds(240, 120, 250, 30);
+        logUsernameField.setFont(new java.awt.Font("Dialog", 0, 14));
+        logContainer.add(logUsernameField);
+        
+        passwordLbl = new JLabel("Password");
+        passwordLbl.setForeground(Color.WHITE);  
+        passwordLbl.setBounds(140, 150, 100, 70);
+        passwordLbl.setFont(new java.awt.Font("Dialog", 0, 18));
+        logContainer.add(passwordLbl);
+        
+        passwordField = new JPasswordField();
+        passwordField.setForeground(Color.WHITE);
+        passwordField.setBackground(new java.awt.Color(32, 36, 69));
+        passwordField.setBounds(240, 170, 250, 30);
+        passwordField.setFont(new java.awt.Font("Dialog", 0, 14));
+        logContainer.add(passwordField);
+        
+        confirmPasswordLbl = new JLabel("Confirm Password");
+        confirmPasswordLbl.setForeground(Color.WHITE);  
+        confirmPasswordLbl.setBounds(70, 200, 150, 70);
+        confirmPasswordLbl.setFont(new java.awt.Font("Dialog", 0, 18));
+        confirmPasswordLbl.setVisible(false);
+        logContainer.add(confirmPasswordLbl);
+        
+        confirmPasswordField = new JPasswordField();
+        confirmPasswordField.setForeground(Color.WHITE);
+        confirmPasswordField.setBackground(new java.awt.Color(32, 36, 69));
+        confirmPasswordField.setBounds(240, 220, 250, 30);
+        confirmPasswordField.setFont(new java.awt.Font("Dialog", 0, 14));
+        confirmPasswordField.setVisible(false);
+        logContainer.add(confirmPasswordField);
+                
+        loginBtn = new JButton("Login");
+        loginBtn.setForeground(Color.WHITE);
+        loginBtn.setBackground(new java.awt.Color(32, 36, 69));
+        loginBtn.setFont(new java.awt.Font("Dialog", 0, 24));
+        loginBtn.setFocusPainted(false);
+        loginBtn.setBounds(245, 300, 130, 30); 
+        loginBtn.setVisible(true);
+        logContainer.add(loginBtn);
+        
+        loginBtn.addActionListener(new ActionListener() 
+        {
+         public void actionPerformed(ActionEvent e) 
+         {
+            loginBtnActionPerformed(e);
+         }
+        });
+        
+        registerBtn = new JButton("Register");
+        registerBtn.setForeground(Color.WHITE);
+        registerBtn.setBackground(new java.awt.Color(32, 36, 69));
+        registerBtn.setFont(new java.awt.Font("Dialog", 0, 24));
+        registerBtn.setFocusPainted(false);
+        registerBtn.setBounds(245, 300, 130, 30); 
+        registerBtn.setVisible(false);
+        logContainer.add(registerBtn);
+        
+        registerBtn.addActionListener(new ActionListener() 
+        {
+         public void actionPerformed(ActionEvent e) 
+         {
+            registerBtnActionPerformed(e);
+         }
+        });
+        
+        changeToRegisterPage = new JButton("Register");
+        changeToRegisterPage.setForeground(Color.WHITE);
+        changeToRegisterPage.setBackground(new java.awt.Color(26, 29, 57));
+        changeToRegisterPage.setFont(new java.awt.Font("Dialog", 0, 12));
+        changeToRegisterPage.setFocusPainted(false);
+        changeToRegisterPage.setBounds(245, 330, 130, 30); 
+        changeToRegisterPage.setBorderPainted(false);
+        changeToRegisterPage.setVisible(true);
+        logContainer.add(changeToRegisterPage);
+        
+        changeToRegisterPage.addActionListener(new ActionListener() 
+        {
+         public void actionPerformed(ActionEvent e) 
+         {
+            titleLbl.setText("Register");
+            loginBtn.setVisible(false);
+            registerBtn.setVisible(true);
+            confirmPasswordLbl.setVisible(true);
+            confirmPasswordField.setVisible(true);
+            changeToRegisterPage.setVisible(false);
+            changeTologinPage.setVisible(true);
+         }
+        });
+        
+        changeTologinPage = new JButton("Login");
+        changeTologinPage.setForeground(Color.WHITE);
+        changeTologinPage.setBackground(new java.awt.Color(26, 29, 57));
+        changeTologinPage.setFont(new java.awt.Font("Dialog", 0, 12));
+        changeTologinPage.setFocusPainted(false);
+        changeTologinPage.setBounds(245, 330, 130, 30); 
+        changeTologinPage.setBorderPainted(false);
+        changeTologinPage.setVisible(false);
+        logContainer.add(changeTologinPage);
+        
+        changeTologinPage.addActionListener(new ActionListener() 
+        {
+         public void actionPerformed(ActionEvent e) 
+         {
+            titleLbl.setText("Login");
+            loginBtn.setVisible(true);
+            registerBtn.setVisible(false);
+            confirmPasswordLbl.setVisible(false);
+            confirmPasswordField.setVisible(false);
+            changeToRegisterPage.setVisible(true);
+            changeTologinPage.setVisible(false);
+         }
+        });
+        
+        logFrame.getContentPane().add(logContainer);
+        logFrame.setVisible(true);
     }
     
+    //Login Button - Login Page
+    private void loginBtnActionPerformed(ActionEvent e) 
+    {                                          
+        VerifyLogin();
+    }   
+    
+    //Register Button - Login Page
+    private void registerBtnActionPerformed(ActionEvent e) 
+    {                                          
+        Register();
+    } 
+    
+    //Verify Login - Login Page
+    public void VerifyLogin()
+    {
+        String username = logUsernameField.getText();
+        String password = String.valueOf(passwordField.getPassword());
+       
+        boolean found = false;
+        
+        try
+            {
+                File file = new File("user.txt");
+
+                if(file.exists())
+                {
+                    FileReader reader = new FileReader(file);
+                    BufferedReader br = new BufferedReader(reader);
+                    String line = br.readLine();              
+                    String[] data;
+                    String dataName;
+                    String dataPassword;
+
+                    while(line != null && found != true)
+                    {
+                        data = line.split(",");
+                        dataName = data[0];
+                        dataPassword = data[1];
+
+                        if(dataName.equals(username) == true && dataPassword.equals(password) == true)
+                        {
+                            found = true;
+                        }
+                        line = br.readLine();
+                    }
+                    br.close();    
+                    
+                    if(found == true)
+                    {
+                        JOptionPane.showMessageDialog(null, "Login Successful!");
+                        loggedUser = username;
+                        logFrame.dispose();
+                        initMainPage();
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(null, "Login Failed!");
+                    }       
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "No Users Found on the Database!");
+                } 
+
+            }catch (IOException e) {System.out.println("An error occurred.");}
+        
+    }
+    
+    //Clear Inputs - Login Page
+    public void clearInputs()
+    {
+        logUsernameField.setText("");
+        passwordField.setText("");
+        confirmPasswordField.setText("");
+    }
+    
+    //Register - Login Page
+    public void Register()
+    {
+        String username = logUsernameField.getText();
+        String password = String.valueOf(passwordField.getPassword());
+        String confirmPassword = String.valueOf(confirmPasswordField.getPassword());
+             
+        boolean found = false;
+        
+        if(password.equals(confirmPassword) == true)
+        {
+            try
+            {
+                File file = new File("user.txt");
+
+                if(file.exists())
+                {
+                    FileReader reader = new FileReader(file);
+                    BufferedReader br = new BufferedReader(reader);
+                    String line = br.readLine();              
+                    String[] data;
+                    String dataName;
+
+                    while(line != null && found != true)
+                    {
+                        data = line.split(",");
+                        dataName = data[0];
+
+                        if(dataName.equals(username) == true)
+                        {
+                            found = true;                    
+                        }
+
+                        line = br.readLine();
+                    }
+                    br.close();
+
+                    if(found != true)
+                    {
+                        try
+                        {                    
+                            FileWriter fr = new FileWriter("user.txt", true); //Set true for append mode
+                            PrintWriter pr = new PrintWriter(fr);
+                            pr.println(username + "," + password);  //New line
+                            pr.close();  
+                            JOptionPane.showMessageDialog(null, "User Registered Successfully!");
+                            
+                            clearInputs();
+                            
+                            titleLbl.setText("Login");
+                            loginBtn.setVisible(true);
+                            registerBtn.setVisible(false);
+                            confirmPasswordLbl.setVisible(false);
+                            confirmPasswordField.setVisible(false);
+                            changeToRegisterPage.setVisible(true);
+                            changeTologinPage.setVisible(false);
+
+                        }catch (IOException e) {System.out.println("An error occurred.");}   
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(null, "User Already Exists!");
+                        clearInputs();
+                    }                          
+                }
+                else
+                {
+                    try
+                    {                    
+                        FileWriter fr = new FileWriter("user.txt", true); //Set true for append mode
+                        PrintWriter pr = new PrintWriter(fr);
+                        pr.println(username + "," + password);  //New line
+                        pr.close();
+                        JOptionPane.showMessageDialog(null, "User Registered Successfully!");  
+                        
+                        clearInputs();
+                        
+                        titleLbl.setText("Login");
+                        loginBtn.setVisible(true);
+                        registerBtn.setVisible(false);
+                        confirmPasswordLbl.setVisible(false);
+                        confirmPasswordField.setVisible(false);
+                        changeToRegisterPage.setVisible(true);
+                        changeTologinPage.setVisible(false);
+
+                    }catch (IOException e) {System.out.println("An error occurred.");}   
+                } 
+
+            }catch (IOException e) {System.out.println("An error occurred.");}
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, "Passwords do not match!");
+        }
+       
+    } 
+    
+    public static void main(String args[])
+    {
+        /* Create and display the form */        
+        new UserClient();
+    }
+    
+     //Connect to Socket - Main Page
     private void connectBtnActionPerformed(ActionEvent e) 
     {            
         connectBtn.setEnabled(false);
         socket();
     }    
     
+    //Download data - Main Page
     private void downloadBtnActionPerformed(ActionEvent e) 
     {                                          
         // TODO add your handling code here:
         
     }    
     
+    //Exit - Main Page
     private void logOutBtnActionPerformed(ActionEvent e) 
     {                                          
         // TODO add your handling code here:
         System.exit(0);
     }   
     
-    
+    //Socket Handler - Main Page
     public void socket()
     {       
         int clientType = 1;
@@ -211,6 +558,10 @@ public class UserClient
             String dataReceived = dataFromServer.readUTF();
             dataDispTxt.append(dataReceived + "\n");
         }
-        catch(Exception IOException){}
+        catch(Exception IOException)
+        {
+            JOptionPane.showMessageDialog(null, "Server Is Offline!");
+            connectBtn.setEnabled(true);
+        }
     }
 }
