@@ -9,7 +9,8 @@ public class SS_Project
         System.out.println("Systems Software Project");   
         
         //Run Server
-        server.main(args);       
+        //server.main(args);     
+        //
     }
     
 }
