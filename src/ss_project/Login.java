@@ -9,6 +9,8 @@ import java.awt.event.*;
 import java.net.*;
 import java.util.Scanner;
 import java.io.*;  
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
@@ -38,6 +40,9 @@ public class Login {
     JButton changeToRegisterPage = null;
     JButton changeTologinPage = null;
     
+    /**
+     *
+     */
     public void initLoginPage()
     {
         //Creating the Frame     
@@ -118,7 +123,7 @@ public class Login {
         {
          public void actionPerformed(ActionEvent e) 
          {
-            //Login();
+            Login();
          }
         });
         
@@ -135,7 +140,7 @@ public class Login {
         {
          public void actionPerformed(ActionEvent e) 
          {
-             //Register();
+             Register();
          }
         });
         
@@ -198,22 +203,83 @@ public class Login {
         //socket();
     }
     
+    public static void VerifyLogin(String username, String password){
+    Scanner check;
+    boolean found = false;
+    String tempUsername = "";
+    String tempPassword = "";
+
+    try{
+        check = new Scanner(new File("user.txt"));
+        check.useDelimiter("[,\n]");
+
+        while(check.hasNext() && !found){
+            tempUsername = check.next();
+            tempPassword = check.next();
+
+            if(tempUsername.trim().equals(username)&& tempPassword.trim().equals(password)){
+                found=true;  
+                System.out.println("Login successful!");
+            }
+            else{
+                System.out.println("Login FAILED!");
+            }
+        }
+    check.close();
+        }
+    catch (IOException e) {
+        System.out.println("An error occurred.");
+        }
+    }
+
+    
     public void Login()
     {
         String username = usernameField.getText();
-        String passwd = passwordField.getText();
-        //check = new Scanner(new File("user.txt"));
+        String password = passwordField.getText();
+        VerifyLogin(username, password);
+        
     }
-    
-    
     
     public void Register() 
     {
-        String username = usernameField.getText();
-        String passwd = passwordField.getText();
-        String confirmPasswd = confirmPasswordField.getText();
-        
-        
+        String password = passwordField.getText();  // Read user input
+        String username = usernameField.getText();  // Read user input
+        VerifyReg(username,password);
     }
     
+    public static void VerifyReg(String username,String password)
+    {
+    Scanner check;
+    boolean found = false;
+    String tempUsername = "";
+
+    try{
+        check = new Scanner(new File("user.txt"));
+        check.useDelimiter("[,\n]");
+
+            while(check.hasNext() && !found){
+                tempUsername = check.next();
+
+                if(tempUsername.trim().equals(username)){
+                    found=true;  
+                    System.out.println("User already exists");
+                }
+            else{
+                try{
+                    FileWriter Data = new FileWriter("user.txt",true);
+                    Data.write(username+",");
+                    Data.write(password);
+                    System.out.println("Data Saved");
+                    }
+                catch (IOException e) {
+                    System.out.println("An error occurred.");
+                    }
+                }
+            }
+        check.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("An error occurred.");
+        }
+    }
 }
