@@ -48,6 +48,7 @@ public class WeatherClient
         
     }
     
+    //Generate Weather Station random(int) data and Send it to de Server as well as the Weather Station Client
     public void genData(Socket server)
     {
         try{         

@@ -28,8 +28,12 @@ public class Server
     {
         try
         {
+            //Start Socket Server
             ServerSocket server = new ServerSocket(9090);    
             System.out.println("Server Running...");  
+            
+            //Accepting Clients Continuously 
+            //Star new Thread for Each new Client
             while (true) 
             {
                 Socket client = server.accept();
@@ -46,6 +50,7 @@ public class Server
         }catch (IOException e) {System.out.println("An error occurred.");}
     }
     
+    //Thread Runner
     class ClientHandler extends Thread
     {
         Socket client;
@@ -62,14 +67,20 @@ public class Server
             {
                 DataOutputStream dataToClient = new DataOutputStream(client.getOutputStream());
 
+                //If Client Type = 1 then Client = User
+                //Else Client Type = 2 then Client = Weather Station
                 if(clientType == 1)
                 {
+                    //Handshake
                     dataToClient.writeUTF("Server -> Connected as User");
+                    
+                    //Receive Data from User Client Continuously 
                     while(true)
                     {
                         DataInputStream dataFromClient = new DataInputStream(client.getInputStream());                        
                         String clientMessage = dataFromClient.readUTF();
 
+                        //Request From User Client to get connected Weather Stations
                         if(clientMessage.equals("GET_WEATHER_CLIENTS"))
                         {                  
                             dataToClient.writeInt(weatherStations.size()); 
@@ -80,7 +91,7 @@ public class Server
                                 dataToClient.writeInt(weatherStations.get(count)); 
                                 dataToClient.flush();
                             }
-                        }
+                        }//Request From User Client to get data from expecific connected Weather Station
                         else if(clientMessage.equals("GET_WEATHER_DATA"))
                         {
                             String userName = dataFromClient.readUTF();
@@ -109,6 +120,8 @@ public class Server
                 }
                 else
                 {
+                    //Generate and send Unique ID to Weather Station
+                    
                     wsCounter = wsCounter + 1; 
                     weatherStations.add(wsCounter);
                     
@@ -119,7 +132,7 @@ public class Server
                     dataToClient.writeInt(wsCounter); 
                     dataToClient.flush();
                    
-                    
+                    //Get data from Weather Station
                     getWeatherData(client);  
                     
                 }
@@ -128,6 +141,7 @@ public class Server
         }
     }
     
+    //Get up-to-date data from Weather Station every 5 seconds and store it on a Bidimensional Array 
     public void getWeatherData(Socket client)
     {        
         while (true) 

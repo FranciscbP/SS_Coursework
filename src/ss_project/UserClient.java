@@ -128,7 +128,6 @@ public class UserClient
         container.add(connectedWSLbl);
         
         listModel = new DefaultListModel();
-        
         connectedWSList = new JList(listModel);
         connectedWSList.setBackground(new java.awt.Color(32, 36, 69));
         connectedWSList.setForeground(Color.WHITE);
@@ -206,6 +205,7 @@ public class UserClient
         frame.getContentPane().add(container);
         frame.setVisible(true);
         
+        //Connect to server
         socket();
     }
     
@@ -389,6 +389,7 @@ public class UserClient
 
                 if(file.exists())
                 {
+                    //Variables
                     FileReader reader = new FileReader(file);
                     BufferedReader br = new BufferedReader(reader);
                     String line = br.readLine();              
@@ -396,20 +397,23 @@ public class UserClient
                     String dataName;
                     String dataPassword;
 
+                    //Get line from file and split it to get the Username and the Password
                     while(line != null && found != true)
                     {
                         data = line.split(",");
                         dataName = data[0];
                         dataPassword = data[1];
-
+                        
                         if(dataName.equals(username) == true && dataPassword.equals(password) == true)
                         {
+                            //Success
                             found = true;
                         }
                         line = br.readLine();
                     }
                     br.close();    
                     
+                    //Success
                     if(found == true)
                     {
                         JOptionPane.showMessageDialog(null, "Login Successful!");
@@ -456,6 +460,7 @@ public class UserClient
 
                 if(file.exists())
                 {
+                    //Variables
                     FileReader reader = new FileReader(file);
                     BufferedReader br = new BufferedReader(reader);
                     String line = br.readLine();              
@@ -479,7 +484,8 @@ public class UserClient
                     if(found != true)
                     {
                         try
-                        {                    
+                        {        
+                            //Append User Login Data to File
                             FileWriter fr = new FileWriter("user.txt", true); //Set true for append mode
                             PrintWriter pr = new PrintWriter(fr);
                             pr.println(username + "," + password);  //New line
@@ -488,6 +494,7 @@ public class UserClient
                             
                             clearInputs();
                             
+                            //Swap from Register Page to Login Page
                             titleLbl.setText("Login");
                             loginBtn.setVisible(true);
                             registerBtn.setVisible(false);
@@ -507,7 +514,8 @@ public class UserClient
                 else
                 {
                     try
-                    {                    
+                    {               
+                        //Create File User Login Data 
                         FileWriter fr = new FileWriter("user.txt", true); //Set true for append mode
                         PrintWriter pr = new PrintWriter(fr);
                         pr.println(username + "," + password);  //New line
@@ -516,6 +524,7 @@ public class UserClient
                         
                         clearInputs();
                         
+                        //Swap from Register Page to Login Page
                         titleLbl.setText("Login");
                         loginBtn.setVisible(true);
                         registerBtn.setVisible(false);
@@ -549,6 +558,7 @@ public class UserClient
         socket(); 
     }    
     
+    //Refresh WeatherStation when Weather Station is 0
     private void refreshBtnActionPerformed(ActionEvent e) 
     {
         getConnectedWeatherStations(server);
@@ -559,7 +569,6 @@ public class UserClient
     {                                          
         // TODO add your handling code here:
         downloadWeatherStationData(server);
-        
     }    
     
     //Exit - Main Page
@@ -603,6 +612,7 @@ public class UserClient
          
     }
       
+    //Get Connect Weather Stations
     public void getConnectedWeatherStations(Socket server)
     {
         try
@@ -643,6 +653,7 @@ public class UserClient
 
     }
     
+    //Download data from Specific Weather Station
     public void downloadWeatherStationData(Socket server)
     {
         try
