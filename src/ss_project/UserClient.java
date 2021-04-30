@@ -18,6 +18,8 @@ public class UserClient
 {
     String loggedUser = "";
     
+    Socket server;
+    
     //Main Page Variables
     JFrame frame = null;
     JPanel container = null;
@@ -139,6 +141,7 @@ public class UserClient
         connectBtn.setForeground(Color.WHITE);
         connectBtn.setBackground(new java.awt.Color(32, 36, 69));
         connectBtn.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        connectBtn.setEnabled(false);
         container.add(connectBtn);
         
         connectBtn.addActionListener(new ActionListener() 
@@ -155,6 +158,7 @@ public class UserClient
         downloadBtn.setForeground(Color.WHITE);
         downloadBtn.setBackground(new java.awt.Color(32, 36, 69));
         downloadBtn.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        downloadBtn.setEnabled(false);
         container.add(downloadBtn);
         
         downloadBtn.addActionListener(new ActionListener() 
@@ -183,6 +187,8 @@ public class UserClient
         
         frame.getContentPane().add(container);
         frame.setVisible(true);
+        
+        socket();
     }
     
     //Create Login Page
@@ -521,15 +527,15 @@ public class UserClient
      //Connect to Socket - Main Page
     private void connectBtnActionPerformed(ActionEvent e) 
     {            
-        connectBtn.setEnabled(false);
-        socket();
+        
+        
     }    
     
     //Download data - Main Page
     private void downloadBtnActionPerformed(ActionEvent e) 
     {                                          
         // TODO add your handling code here:
-        
+        sendDataToServer(server);
     }    
     
     //Exit - Main Page
@@ -547,21 +553,40 @@ public class UserClient
         try
         {
             //Connect to server
-            Socket server = new Socket("localhost",9090);
+            server = new Socket("localhost",9090);
             DataInputStream dataFromServer = new DataInputStream(server.getInputStream());
             DataOutputStream dataToServer = new DataOutputStream(server.getOutputStream());
 
             //Send to Server
             dataToServer.writeInt(clientType);
+            dataToServer.flush();
+            
 
             //Receive from Server
             String dataReceived = dataFromServer.readUTF();
             dataDispTxt.append(dataReceived + "\n");
+            
         }
         catch(Exception IOException)
         {
             JOptionPane.showMessageDialog(null, "Server Is Offline!");
             connectBtn.setEnabled(true);
         }
+        
+        
+    }
+      
+    public void sendDataToServer(Socket server)
+    {
+        try
+        {
+            DataOutputStream dataToServer = new DataOutputStream(server.getOutputStream());
+
+            //Send to Server
+            dataToServer.writeUTF("BANANANA");
+            dataToServer.flush();
+            
+        }catch (IOException e) {System.out.println("An error occurred.");}
+
     }
 }
