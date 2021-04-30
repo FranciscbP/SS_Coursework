@@ -10,14 +10,12 @@ import java.net.*;
 import java.io.*;  
 import javax.swing.*;
 
-/**
- *
- * @author Kiko
- */
+@SuppressWarnings("unchecked")
+
 public class UserClient 
 {
-    String loggedUser = "";
-    
+    //Variables
+    String loggedUser = ""; 
     Socket server;
     
     //Main Page Variables
@@ -28,11 +26,13 @@ public class UserClient
     JLabel usernameLbl = null;
     JLabel dataDispLbl = null;
     JTextArea dataDispTxt = null;
+    DefaultListModel <String> listModel = null;
     JLabel connectedWSLbl = null;
     JList connectedWSList = null;
     JButton connectBtn = null;
     JButton downloadBtn = null;
     JButton logOutBtn = null;
+    JButton refreshBtn = null;
     
     //Login Page Variables
     JFrame logFrame = null;
@@ -127,12 +127,13 @@ public class UserClient
         connectedWSLbl.setBounds(325, 70, 300, 70);
         container.add(connectedWSLbl);
         
-        connectedWSList = new JList();
+        listModel = new DefaultListModel();
+        
+        connectedWSList = new JList(listModel);
         connectedWSList.setBackground(new java.awt.Color(32, 36, 69));
         connectedWSList.setForeground(Color.WHITE);
         connectedWSList.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        connectedWSList.setBounds(310,120, 280, 200);
-        connectedWSList.setEnabled(false);        
+        connectedWSList.setBounds(310,120, 280, 200);     
         container.add(connectedWSList);
         
         connectBtn = new JButton("Connect");
@@ -149,6 +150,23 @@ public class UserClient
          public void actionPerformed(ActionEvent e) 
          {
              connectBtnActionPerformed(e);        
+         }
+        });
+        
+        refreshBtn = new JButton("Refresh");
+        refreshBtn.setFocusPainted(false);
+        refreshBtn.setBounds(10,335,130,30);
+        refreshBtn.setForeground(Color.WHITE);
+        refreshBtn.setBackground(new java.awt.Color(32, 36, 69));
+        refreshBtn.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        refreshBtn.setVisible(false);
+        container.add(refreshBtn);
+        
+        refreshBtn.addActionListener(new ActionListener() 
+        {
+         public void actionPerformed(ActionEvent e) 
+         {
+             refreshBtnActionPerformed(e);        
          }
         });
         
@@ -527,15 +545,21 @@ public class UserClient
      //Connect to Socket - Main Page
     private void connectBtnActionPerformed(ActionEvent e) 
     {            
-        
-        
+        connectBtn.setEnabled(false);
+        socket(); 
     }    
+    
+    private void refreshBtnActionPerformed(ActionEvent e) 
+    {
+        getConnectedWeatherStations(server);
+    }
     
     //Download data - Main Page
     private void downloadBtnActionPerformed(ActionEvent e) 
     {                                          
         // TODO add your handling code here:
-        sendDataToServer(server);
+        downloadWeatherStationData(server);
+        
     }    
     
     //Exit - Main Page
@@ -565,28 +589,103 @@ public class UserClient
             //Receive from Server
             String dataReceived = dataFromServer.readUTF();
             dataDispTxt.append(dataReceived + "\n");
+            downloadBtn.setEnabled(true);
+            
+            getConnectedWeatherStations(server);
+            downloadWeatherStationData(server);
             
         }
         catch(Exception IOException)
         {
             JOptionPane.showMessageDialog(null, "Server Is Offline!");
             connectBtn.setEnabled(true);
-        }
-        
-        
+        }  
+         
     }
       
-    public void sendDataToServer(Socket server)
+    public void getConnectedWeatherStations(Socket server)
     {
         try
         {
             DataOutputStream dataToServer = new DataOutputStream(server.getOutputStream());
-
+            DataInputStream dataFromServer = new DataInputStream(server.getInputStream());
+            
             //Send to Server
-            dataToServer.writeUTF("BANANANA");
+            dataToServer.writeUTF("GET_WEATHER_CLIENTS");
             dataToServer.flush();
             
+            //Get WeatherStations
+            int connectedWeatherStations = dataFromServer.readInt();
+            
+            listModel.removeAllElements();
+            
+            if(connectedWeatherStations != 0)
+            {   
+                connectedWSList.setEnabled(true);
+                for(int count = 0; count < connectedWeatherStations; count ++)
+                {
+                    int weatherStationId = dataFromServer.readInt();  
+                    listModel.addElement("  Weather Station - " + weatherStationId);
+                }
+                connectedWSList.setSelectedIndex(0);
+                refreshBtn.setVisible(false);
+                connectBtn.setVisible(true);
+            }
+            else
+            {
+                listModel.addElement(" No Connected Weather Stations!");
+                connectedWSList.setEnabled(false);
+                connectBtn.setVisible(false);
+                refreshBtn.setVisible(true);
+            }
+
         }catch (IOException e) {System.out.println("An error occurred.");}
 
+    }
+    
+    public void downloadWeatherStationData(Socket server)
+    {
+        try
+        {
+            DataOutputStream dataToServer = new DataOutputStream(server.getOutputStream());
+            DataInputStream dataFromServer = new DataInputStream(server.getInputStream());
+            
+            //Send to Server
+            dataToServer.writeUTF("GET_WEATHER_DATA");
+            dataToServer.flush();
+            
+            //Get WeatherStations
+            int getSelectedWS = connectedWSList.getSelectedIndex();
+            String weatherStationStr = listModel.getElementAt(getSelectedWS);
+            
+            String[] wsSelectedID = weatherStationStr.split(" - ");
+            int selectedID =Integer.parseInt(wsSelectedID[1]);
+
+            //Send to Server
+            dataToServer.writeUTF(loggedUser);
+            dataToServer.flush();
+            
+            dataToServer.writeInt(selectedID);
+            dataToServer.flush();
+            
+            String wsName =  "Weather Station: " + dataFromServer.readInt();
+            String temperature = "Temperature: " + dataFromServer.readInt();
+            String pressure = "Pressure: " + dataFromServer.readInt();
+            String humidity = "Humidity: " + dataFromServer.readInt();
+            String windSpeed = "WindSpeed: " + dataFromServer.readInt();
+            String windDirection = "Wind Direction: " + dataFromServer.readInt();
+            String rainLevel = "Rain Level: " + dataFromServer.readInt();
+            String radiation = "Radiation: " + dataFromServer.readInt();
+                
+            dataDispTxt.setText("  " + wsName + "\n\n");
+            dataDispTxt.append("  " + temperature + "\n");
+            dataDispTxt.append("  " + pressure + "\n");
+            dataDispTxt.append("  " + humidity + "\n");
+            dataDispTxt.append("  " + windSpeed + "\n");
+            dataDispTxt.append("  " + windDirection + "\n");
+            dataDispTxt.append("  " + rainLevel + "\n");
+            dataDispTxt.append("  " + radiation + "\n");
+            
+        }catch (IOException e) {System.out.println("An error occurred.");}
     }
 }
