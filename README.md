@@ -1,4 +1,4 @@
-# Systems Software Project
+# Systems Software Coursework
 
 A farmer wishes to improve the management of his business through the use oftechnology. He hires your team to devise a distributed system on a TCP/IP-based
 network infrastructure composed of the following components, all connected to the network:
